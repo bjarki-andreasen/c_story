@@ -46,8 +46,8 @@ static void foo_routine(void)
 	static struct qic qic_get_last;
 	static struct qic qic_get;
 	static struct foo foo_set;
-	static struct bar_listener bar_listener;
-	static struct qic_listener qic_listener;
+	static struct listener_listener bar_listener;
+	static struct listener_listener qic_listener;
 	uint32_t events;
 
 	k_event_init(&event);

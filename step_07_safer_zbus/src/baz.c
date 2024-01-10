@@ -16,6 +16,7 @@ ZBUS_CHAN_DEFINE(
 );
 
 ZBUS_SUBSCRIBER_DEFINE(baz_sub, 4);
+ZBUS_CHAN_ADD_OBS(bar_chan, baz_sub, 3);
 
 static void baz_routine(void)
 {
@@ -24,16 +25,16 @@ static void baz_routine(void)
 	static struct bar bar_get;
 	static struct baz baz_set;
 
-	zbus_chan_read(&bar_chan, &bar_get_last, K_FOREVER);
+	bar_chan_read(&bar_get_last, K_FOREVER);
 
 	while (zbus_sub_wait(&baz_sub, &chan, K_FOREVER) == 0) {
-		if (chan == &bar_chan) {
-			zbus_chan_read(&bar_chan, &bar_get, K_FOREVER);
+		if (bar_is_bar_chan(chan)) {
+			bar_chan_read(&bar_get, K_FOREVER);
 			if (bar_get.b != bar_get_last.b) {
 				printk("baz detected bar.b change from %u to %u\n", bar_get_last.b, bar_get.b);
 				printk("baz set baz.b to %u\n", bar_get.b);
 				baz_set.b = bar_get.b;
-				zbus_chan_pub(&baz_chan, &baz_set, K_FOREVER);
+				baz_chan_pub(&baz_set, K_FOREVER);
 				bar_get_last = bar_get;
 			}
 		}
