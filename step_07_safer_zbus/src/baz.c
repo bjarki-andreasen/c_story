@@ -21,22 +21,15 @@ ZBUS_CHAN_ADD_OBS(bar_chan, baz_sub, 3);
 static void baz_routine(void)
 {
 	const struct zbus_channel *chan;
-	static struct bar bar_get_last;
 	static struct bar bar_get;
 	static struct baz baz_set;
-
-	bar_chan_read(&bar_get_last, K_FOREVER);
 
 	while (zbus_sub_wait(&baz_sub, &chan, K_FOREVER) == 0) {
 		if (bar_is_bar_chan(chan)) {
 			bar_chan_read(&bar_get, K_FOREVER);
-			if (bar_get.b != bar_get_last.b) {
-				printk("baz detected bar.b change from %u to %u\n", bar_get_last.b, bar_get.b);
-				printk("baz set baz.b to %u\n", bar_get.b);
-				baz_set.b = bar_get.b;
-				baz_chan_pub(&baz_set, K_FOREVER);
-				bar_get_last = bar_get;
-			}
+			printk("baz set baz.b to %u\n", bar_get.b);
+			baz_set.b = bar_get.b;
+			baz_chan_pub(&baz_set, K_FOREVER);
 		}
 	}
 }

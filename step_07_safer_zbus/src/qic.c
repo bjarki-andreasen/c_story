@@ -1,10 +1,27 @@
 #include <c_story/qic.h>
 #include <zephyr/kernel.h>
 
+static bool qic_chan_validator(const void *msg, size_t msg_size)
+{
+	const struct qic *q = msg;
+	static struct qic last_q;
+
+	if (msg_size != sizeof(struct qic)) {
+		return false;
+	}
+
+	if (memcmp(q, &last_q, sizeof(struct qic)) == 0) {
+		return false;
+	}
+
+	last_q = *q;
+	return true;
+}
+
 ZBUS_CHAN_DEFINE(
 	qic_chan,
 	struct qic,
-	NULL,
+	qic_chan_validator,
 	NULL,
 	ZBUS_OBSERVERS_EMPTY,
 	ZBUS_MSG_INIT()
