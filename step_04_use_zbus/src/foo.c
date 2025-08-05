@@ -18,6 +18,7 @@ ZBUS_CHAN_DEFINE(
 
 ZBUS_SUBSCRIBER_DEFINE(foo_sub, 4);
 ZBUS_CHAN_ADD_OBS(bar_chan, foo_sub, 4);
+ZBUS_CHAN_ADD_OBS(qic_chan, foo_sub, 4);
 
 static void foo_routine(void)
 {
